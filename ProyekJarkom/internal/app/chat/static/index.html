@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Chat App</title>
+  <link rel="stylesheet" href="style.css" />
+  <link rel="icon" href="data:,">
+</head>
+
+<body>
+  <div id="loginScreen">
+    <div class="login-box">
+      <h1>Chat App</h1>
+      <input type="text" id="usernameInput" placeholder="Masukkan nama kamu" autofocus />
+      <button id="loginBtn" type="button" onclick="login()">Masuk Chat</button>
+      <p class="info">Gunakan DNS (dev): <b>127.0.0.1:8053</b></p>
+    </div>
+  </div>
+
+  <div id="app" class="hidden">
+    <div class="sidebar">
+      <div class="header">
+        <div class="user-info">
+          <div class="avatar">U</div>
+          <span id="myUsername"></span>
+        </div>
+      </div>
+      <div id="userList"></div>
+    </div>
+
+    <div class="chat-area">
+      <div class="chat-header">
+        <div class="chat-user">
+          <div class="avatar">S</div>
+          <span id="chatWith">Pilih user untuk chat</span>
+        </div>
+      </div>
+      <div id="messages" class="messages" aria-live="polite"></div>
+      <div class="chat-input">
+        <input type="text" id="messageInput" placeholder="Ketik pesan..." disabled autocomplete="off" />
+        <button type="button" onclick="sendMessage()" id="sendBtn" disabled>Kirim</button>
+      </div>
+    </div>
+  </div>
+
+  <script src="app.js"></script>
+</body>
+
+</html>
