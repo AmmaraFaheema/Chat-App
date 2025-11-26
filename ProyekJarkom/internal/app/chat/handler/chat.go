@@ -57,6 +57,37 @@ func (c *ChatHandler) Announce(message string) {
 	}
 }
 
+// groupMembers maps group name to list of addresses of member peers
+var groupMembers = make(map[string][]string)
+
+// AssignPeerToGroup assigns a peer address to a group
+func (c *ChatHandler) AssignPeerToGroup(group string, address string) {
+	if _, exists := groupMembers[group]; !exists {
+		groupMembers[group] = []string{}
+	}
+	// Check if address already in group
+	for _, addr := range groupMembers[group] {
+		if addr == address {
+			return
+		}
+	}
+	groupMembers[group] = append(groupMembers[group], address)
+}
+
+// BroadcastToGroup sends message to all peers in the group
+func (c *ChatHandler) BroadcastToGroup(group string, message string) {
+	members, exists := groupMembers[group]
+	if !exists {
+		return
+	}
+	for _, addr := range members {
+		conn := c.GetConnection(addr)
+		if conn != nil {
+			fmt.Fprintln(conn, message)
+		}
+	}
+}
+
 func (c *ChatHandler) Listen() {
 	listenAddress := fmt.Sprintf(":%s", strconv.Itoa(int(c.env.Port)))
 

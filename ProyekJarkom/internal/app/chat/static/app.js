@@ -147,6 +147,7 @@
   function exposeGlobals() {
     window.login = login;
     window.sendMessage = sendMessage;
+    window.addPeerToGroup = addPeerToGroup;
   }
 
   document.addEventListener("DOMContentLoaded", () => {
