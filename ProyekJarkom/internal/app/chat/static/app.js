@@ -9,8 +9,6 @@
   let messagesDiv = null;
   let messageInput = null;
   let sendBtn = null;
-
-  // HISTORY: simpan chat berdasarkan username
   let chatHistory = {};
 
   function saveToHistory(user, type, text) {
@@ -58,13 +56,10 @@
         const parts = e.data.split(":", 2);
         const from = parts[0] || "";
         const msg = parts[1] || "";
-
-        // HISTORY: simpan pesan masuk
         if (from && msg) {
           saveToHistory(from, "received", msg.trim());
         }
 
-        // hanya tampilkan pesan jika sedang membuka chatnya
         if (from === currentChat) {
           addMessage("received", msg.trim());
         }
@@ -103,19 +98,11 @@
 
   function openChat(username, ev) {
     currentChat = username;
-
-    // tampilkan nama di header
     const cw = document.getElementById("chatWith");
     if (cw) cw.textContent = username;
-
-    // aktifkan input chat
     if (messageInput) messageInput.disabled = false;
     if (sendBtn) sendBtn.disabled = false;
-
-    // HISTORY: tampilkan kembali pesan user tersebut
     loadHistory(username);
-
-    // styling active user
     document.querySelectorAll(".user-item").forEach(u => u.classList.remove("active"));
     if (ev && ev.currentTarget) ev.currentTarget.classList.add("active");
   }
@@ -127,8 +114,6 @@
 
     if (ws && ws.readyState === WebSocket.OPEN) {
       ws.send(`${currentChat}:${msg}`);
-
-      // HISTORY: simpan pesan keluar
       saveToHistory(currentChat, "sent", msg);
 
       addMessage("sent", msg);
