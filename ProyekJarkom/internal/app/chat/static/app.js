@@ -150,6 +150,67 @@
     window.addPeerToGroup = addPeerToGroup;
   }
 
+const chatHistory = {}; 
+
+function appendMessage(sender, text, target) {
+  const key = target || currentChatTarget;
+  if (!chatHistory[key]) chatHistory[key] = [];
+
+  const div = document.createElement("div");
+  div.className = sender === myName ? "message sent" : "message received";
+  div.innerHTML = `<strong>${sender}:</strong> ${text}`;
+  chatHistory[key].push(div.outerHTML);
+
+  if (currentChatTarget === key) {
+    document.getElementById("messages").appendChild(div);
+    div.scrollIntoView();
+  }
+}
+
+function startChat(target, type) {
+  currentChatTarget = target;
+  const displayName = type === "group" ? "Group: " + target : target;
+  document.getElementById("chatWith").textContent = displayName;
+  
+  const messagesDiv = document.getElementById("messages");
+  messagesDiv.innerHTML = "";
+
+  if (chatHistory[target]) {
+    chatHistory[target].forEach(html => {
+      messagesDiv.innerHTML += html;
+    });
+    messagesDiv.lastElementChild?.scrollIntoView();
+  }
+
+  document.getElementById("messageInput").disabled = false;
+  document.getElementById("sendBtn").disabled = false;
+  document.getElementById("messageInput").focus();
+}
+
+function sendMessage() {
+  const input = document.getElementById("messageInput");
+  const msg = input.value.trim();
+  if (!msg || !currentChatTarget) return;
+
+  const payload = {
+    to: currentChatTarget,
+    message: msg,
+    type: currentChatTarget === myGroup || 
+           ["umum","kelompok-a","kelompok-b","kelompok-c","rahasia"].includes(currentChatTarget)
+           ? "group" : "private",
+    from: myName
+  };
+
+  fetch("/send", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify(payload)
+  });
+
+  appendMessage(myName, msg, currentChatTarget);
+  input.value = "";
+}
+
   document.addEventListener("DOMContentLoaded", () => {
     console.log("DOM ready - initializing script.js");
     messagesDiv = document.getElementById("messages");
